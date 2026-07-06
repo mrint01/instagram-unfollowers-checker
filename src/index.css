@@ -206,21 +206,71 @@ body {
   margin-bottom: 20px;
 }
 
-/* Results */
+/* Progress */
 
-.results__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+.progress {
+  margin-bottom: 20px;
 }
 
-.results__header h2 {
-  font-size: 1.15rem;
-  margin: 0;
+.progress__label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.progress__track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  overflow: hidden;
+}
+
+.progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent-gradient);
+  transition: width 0.15s ease;
+}
+
+/* Results */
+
+.results {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.results__count {
+  font-size: 1.1rem;
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+.results__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.download-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-gradient);
+  color: #1a1120;
+  text-decoration: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 0.95rem;
   font-weight: 700;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.download-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
 .reset-button {
@@ -236,73 +286,6 @@ body {
 
 .reset-button:hover {
   background: var(--surface-hover);
-}
-
-.results-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-}
-
-.person-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  border-radius: 14px;
-  padding: 12px 14px;
-  text-decoration: none;
-  color: var(--text);
-  transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
-}
-
-.person-card:hover {
-  background: var(--surface-hover);
-  border-color: rgba(214, 41, 118, 0.5);
-  transform: translateY(-2px);
-}
-
-.person-card__avatar {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--accent-gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: #1a1120;
-  font-size: 0.95rem;
-}
-
-.person-card__name {
-  flex: 1;
-  font-size: 0.9rem;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.person-card__arrow {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 48px 16px;
-  color: var(--text-muted);
-}
-
-.empty-state__icon {
-  font-size: 2.4rem;
-  margin-bottom: 8px;
 }
 
 .footer {

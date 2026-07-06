@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import FileUploader from './components/FileUploader.jsx'
-import ResultsList from './components/ResultsList.jsx'
 import Instructions from './components/Instructions.jsx'
 import { parseInstagramFile, findNotFollowingBack } from './utils/parseInstagramData.js'
+import { generateResultsHtml } from './utils/generateResultsHtml.js'
 
 export default function App() {
   const [followers, setFollowers] = useState(null)
@@ -10,6 +10,9 @@ export default function App() {
   const [followersFile, setFollowersFile] = useState(null)
   const [followingFile, setFollowingFile] = useState(null)
   const [error, setError] = useState(null)
+  const [progress, setProgress] = useState(0)
+  const [downloadUrl, setDownloadUrl] = useState(null)
+  const downloadUrlRef = useRef(null)
 
   const handleFile = async (file, target) => {
     setError(null)
@@ -32,12 +35,44 @@ export default function App() {
     return findNotFollowingBack(followers, following)
   }, [followers, following])
 
+  const isProcessing = notFollowingBack !== null && !downloadUrl
+
+  useEffect(() => {
+    if (!notFollowingBack) return
+    setProgress(0)
+    const interval = setInterval(() => {
+      setProgress((p) => Math.min(p + Math.random() * 20 + 10, 100))
+    }, 150)
+    const timeout = setTimeout(() => {
+      clearInterval(interval)
+      setProgress(100)
+      const html = generateResultsHtml(notFollowingBack)
+      const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
+      downloadUrlRef.current = url
+      setDownloadUrl(url)
+    }, 900)
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [notFollowingBack])
+
+  useEffect(() => {
+    return () => {
+      if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current)
+    }
+  }, [])
+
   const reset = () => {
+    if (downloadUrlRef.current) URL.revokeObjectURL(downloadUrlRef.current)
+    downloadUrlRef.current = null
     setFollowers(null)
     setFollowing(null)
     setFollowersFile(null)
     setFollowingFile(null)
     setError(null)
+    setProgress(0)
+    setDownloadUrl(null)
   }
 
   return (
@@ -71,18 +106,29 @@ export default function App() {
 
       {error && <div className="error-banner">⚠️ {error}</div>}
 
-      {notFollowingBack && (
+      {isProcessing && (
+        <section className="progress">
+          <div className="progress__label">Comparing your lists…</div>
+          <div className="progress__track">
+            <div className="progress__fill" style={{ width: `${progress}%` }} />
+          </div>
+        </section>
+      )}
+
+      {downloadUrl && (
         <section className="results">
-          <div className="results__header">
-            <h2>
-              {notFollowingBack.length} account{notFollowingBack.length === 1 ? '' : 's'} you
-              follow that don't follow you back
-            </h2>
+          <p className="results__count">
+            <strong>{notFollowingBack.length}</strong> account
+            {notFollowingBack.length === 1 ? '' : 's'} you follow that don't follow you back
+          </p>
+          <div className="results__actions">
+            <a className="download-button" href={downloadUrl} download="instagram-unfollowers.html">
+              ⬇️ Download HTML report
+            </a>
             <button className="reset-button" onClick={reset}>
               Start over
             </button>
           </div>
-          <ResultsList people={notFollowingBack} />
         </section>
       )}
 
