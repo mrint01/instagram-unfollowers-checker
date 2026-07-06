@@ -119,7 +119,8 @@ export default function App() {
         <section className="results">
           <p className="results__count">
             <strong>{notFollowingBack.length}</strong> account
-            {notFollowingBack.length === 1 ? '' : 's'} you follow that don't follow you back
+            {notFollowingBack.length === 1 ? '' : 's'} you follow that{' '}
+            {notFollowingBack.length === 1 ? "doesn't" : "don't"} follow you back
           </p>
           <div className="results__actions">
             <a className="download-button" href={downloadUrl} download="instagram-unfollowers.html">

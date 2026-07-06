@@ -12,19 +12,20 @@ export function generateResultsHtml(people) {
   const rows = people
     .map(
       (person) => `
-        <li>
+        <li class="person-row">
           <a class="person-card" href="${escapeHtml(person.href)}" target="_blank" rel="noopener noreferrer">
             <span class="person-card__avatar">${escapeHtml(person.username[0]?.toUpperCase() ?? '?')}</span>
             <span class="person-card__name">@${escapeHtml(person.username)}</span>
             <span class="person-card__arrow">&#8599;</span>
           </a>
+          <button type="button" class="delete-button" aria-label="Remove @${escapeHtml(person.username)} from list" title="Remove from list">&times;</button>
         </li>`
     )
     .join('')
 
   const body = people.length
-    ? `<ul class="results-grid">${rows}</ul>`
-    : `<div class="empty-state"><div class="empty-state__icon">🎉</div><p>Everyone you follow also follows you back.</p></div>`
+    ? `<ul class="results-grid" id="results-grid">${rows}</ul>`
+    : `<div class="empty-state" id="empty-state"><div class="empty-state__icon">🎉</div><p>Everyone you follow also follows you back.</p></div>`
 
   return `<!doctype html>
 <html lang="en">
@@ -99,14 +100,66 @@ export function generateResultsHtml(people) {
   .person-card__arrow { color: var(--text-muted); font-size: 0.9rem; }
   .empty-state { text-align: center; padding: 48px 16px; color: var(--text-muted); }
   .empty-state__icon { font-size: 2.4rem; margin-bottom: 8px; }
+  .person-row { display: flex; align-items: stretch; gap: 8px; }
+  .person-row .person-card { flex: 1; }
+  .delete-button {
+    flex-shrink: 0;
+    width: 36px;
+    border-radius: 14px;
+    border: 1px solid var(--surface-border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .delete-button:hover {
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.4);
+    color: #fca5a5;
+  }
 </style>
 </head>
 <body>
   <div class="page">
-    <h1>${people.length} account${people.length === 1 ? '' : 's'} that don't follow you back</h1>
+    <h1 id="count-heading">${people.length} account${people.length === 1 ? '' : 's'} that ${people.length === 1 ? "doesn't" : "don't"} follow you back</h1>
     <p class="meta">Generated on ${escapeHtml(generatedAt)}</p>
     ${body}
   </div>
+  <script>
+    (function () {
+      var heading = document.getElementById('count-heading')
+
+      function updateHeading(remaining) {
+        heading.textContent =
+          remaining + ' account' + (remaining === 1 ? '' : 's') + (remaining === 1 ? " that doesn't" : " that don't") + ' follow you back'
+      }
+
+      function showEmptyState() {
+        if (document.getElementById('empty-state')) return
+        var div = document.createElement('div')
+        div.id = 'empty-state'
+        div.className = 'empty-state'
+        div.innerHTML = '<div class="empty-state__icon">\\u{1F389}</div><p>Everyone you follow also follows you back.</p>'
+        document.querySelector('.page').appendChild(div)
+      }
+
+      document.addEventListener('click', function (e) {
+        var button = e.target.closest('.delete-button')
+        if (!button) return
+        var row = button.closest('.person-row')
+        var list = document.getElementById('results-grid')
+        if (row) row.remove()
+        var remaining = list ? list.children.length : 0
+        updateHeading(remaining)
+        if (remaining === 0 && list) {
+          list.remove()
+          showEmptyState()
+        }
+      })
+    })()
+  </script>
 </body>
 </html>
 `
