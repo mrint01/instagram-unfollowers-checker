@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const STEPS = [
+const BASE_STEPS = [
   {
     title: 'Open Instagram settings',
     body: 'On the Instagram app, go to your profile → tap the ☰ menu → Settings and privacy. On the web, click your profile picture → Settings.',
@@ -25,24 +25,29 @@ const STEPS = [
     title: 'Wait for the email, then download',
     body: 'Instagram emails you (usually within minutes to a few hours) with a link to download a .zip file.',
   },
-  {
-    title: 'Unzip and find the two files',
-    body: 'Inside the zip, look under connections/followers_and_following/ for followers_1.json and following.json. Upload those two files above.',
-  },
 ]
 
-export default function Instructions() {
+const DEFAULT_LAST_STEP = {
+  title: 'Unzip and find the two files',
+  body: 'Inside the zip, look under connections/followers_and_following/ for followers_1.json and following.json. Upload those two files above.',
+}
+
+export default function Instructions({
+  title = 'How do I get my followers/following JSON files from Instagram?',
+  lastStep = DEFAULT_LAST_STEP,
+}) {
   const [open, setOpen] = useState(false)
+  const steps = [...BASE_STEPS, lastStep]
 
   return (
     <section className="instructions">
       <button className="instructions__toggle" onClick={() => setOpen((o) => !o)}>
-        <span>📖 How do I get my followers/following JSON files from Instagram?</span>
+        <span>📖 {title}</span>
         <span className={`instructions__chevron ${open ? 'instructions__chevron--open' : ''}`}>⌄</span>
       </button>
       {open && (
         <ol className="instructions__list">
-          {STEPS.map((step, i) => (
+          {steps.map((step, i) => (
             <li key={step.title}>
               <span className="instructions__step-number">{i + 1}</span>
               <div>

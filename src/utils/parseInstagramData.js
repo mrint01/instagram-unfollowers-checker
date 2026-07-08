@@ -15,8 +15,10 @@ export function extractUsernames(json) {
     const username = data.value || data.href?.split('/').filter(Boolean).pop()
     if (!username) continue
     usernames.set(username.toLowerCase(), {
+      key: username.toLowerCase(),
       username,
       href: data.href || `https://www.instagram.com/${username}/`,
+      timestamp: data.timestamp || 0,
     })
   }
   return usernames

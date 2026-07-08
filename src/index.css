@@ -57,6 +57,75 @@ body {
   line-height: 1.5;
 }
 
+/* Mode selection */
+
+.mode-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .mode-select {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mode-card {
+  background: var(--surface);
+  border: 1.5px solid var(--surface-border);
+  border-radius: var(--radius);
+  padding: 28px 22px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.mode-card:hover {
+  background: var(--surface-hover);
+  border-color: rgba(214, 41, 118, 0.5);
+  transform: translateY(-1px);
+}
+
+.mode-card__icon {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.mode-card__title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.mode-card__desc {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.back-button:hover {
+  color: var(--text);
+}
+
+.uploaders--single {
+  grid-template-columns: 1fr;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Instructions */
 
 .instructions {
